@@ -1,0 +1,49 @@
+function [v_mean, vx_mean, vy_mean, vx_res_all, vy_res_all, v_res_all] = ...
+    computeMeanVelocityAndResidual(vx, vy, t)
+
+% ===== grouped by scans ===== %
+[timestamps, ~, groupIdx] = unique(t);
+
+numScans = length(timestamps);
+
+% ===== storage ===== %
+v_mean  = zeros(numScans,1);
+vx_mean = zeros(numScans,1);
+vy_mean = zeros(numScans,1);
+
+vx_res_all = zeros(size(vx));
+vy_res_all = zeros(size(vy));
+v_res_all  = zeros(size(vx));
+
+% ===== Loop per scan ===== %
+for i = 1:numScans
+    
+    idx = (groupIdx == i);
+
+    vx_scan = vx(idx);
+    vy_scan = vy(idx);
+
+    % ===== Median  ===== %
+    vx_median = median(vx_scan, 'omitnan');
+    vy_median = median(vy_scan, 'omitnan');
+
+    % ===== Mean (in km/h) ===== %
+    vx_mean(i) = vx_median * 3.6;
+    vy_mean(i) = vy_median * 3.6;
+
+    % ===== Abs Velocity ===== %
+    v = sqrt(vx_scan.^2 + vy_scan.^2);
+    v_mean(i) = median(v, 'omitnan') * 3.6;
+
+    % ===== Residuals ===== %
+    vx_res = vx_scan - vx_median;
+    vy_res = vy_scan - vy_median;
+    v_res  = sqrt(vx_res.^2 + vy_res.^2) * 3.6;
+
+    % ===== Zurückschreiben ===== %
+    vx_res_all(idx) = vx_res;
+    vy_res_all(idx) = vy_res;
+    v_res_all(idx)  = v_res;
+end
+
+end
