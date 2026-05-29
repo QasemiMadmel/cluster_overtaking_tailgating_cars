@@ -1,4 +1,4 @@
-function  [scan_current_x_close, scan_current_y_close] = clusterObjectInDangerousArea(scan_x_values, scan_y_values)
+function  [scan_current_x_close, scan_current_y_close] = ExtractPointsInDangerousArea(scan_x_values, scan_y_values)
  
 numScans = size(scan_x_values, 1); % numebr of rows
 numPoints = 421; 
