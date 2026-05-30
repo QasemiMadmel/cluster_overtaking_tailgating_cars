@@ -26,7 +26,10 @@ for i = 1:numberOfScans
     r_scan = r(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
 
     % mask the proper values
-    mask_for_valid_values = (v_scan<20 & v_scan>0); 
+    upper_threshold = 20; 
+    lower_threshold = 0; 
+
+    mask_for_valid_values = (v_scan<upper_threshold & v_scan>lower_threshold); 
 
     % set everything else to NaN
     v_scan(~mask_for_valid_values) = NaN; 

@@ -1,4 +1,4 @@
-function plotDanger(x, y, danger)
+function plotPointsWithDangerousVelocity(x, y, danger)
 
 numScans = size(x,1);
 

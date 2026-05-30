@@ -1,4 +1,4 @@
-function [danger] = detectDangerousObject(v_med, median_indicies, rssi, r, median_filtered)
+function [danger] = detectPointWithPeakVelocity(v_med, median_indicies, rssi, r, median_filtered)
 
 % danger:  
 % col 1: scan number
