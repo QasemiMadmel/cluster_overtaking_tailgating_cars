@@ -1,7 +1,7 @@
 function [v_mean, v_median, point_index_median] = ...
     computeMeanMedianVelocity(v, r, numberOfPointsPerScan)
  
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
     numberOfScans = size(v,1); % number of rows
     middle_of_scan = floor(numberOfPointsPerScan/2);  
     start = 1; 
@@ -31,7 +31,6 @@ function [v_mean, v_median, point_index_median] = ...
         point_index_median(n,1) = idx_med; % store the median index for later to find car_overtaking_events
 
         % whole scan 
-
         v_mean(n,2) = mean(v_scan, 'omitnan')*3.6;
         v_median(n,2) = (median(v_scan, 'omitnan'))*3.6;
 
@@ -60,7 +59,7 @@ function [v_mean, v_median, point_index_median] = ...
     v_right = v_median(:,1);
     r_right = r_at_median(:,1);
     
-    threshold = 5; % arbitary value of 20 km/H (can be the ego velcoity later)
+    threshold = 5; % arbitary value of 20 km/H -> can be adapted later
 
     idx_event = v_right > threshold;
     
@@ -84,8 +83,7 @@ function [v_mean, v_median, point_index_median] = ...
              v_right(k)+1, ...
              sprintf('%.2f m', r_right(k)), ...
              'FontSize',10, ...
-             'Color','red');
-    
+             'Color','red'); 
     end
     
     xlabel('scan number');
