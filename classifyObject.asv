@@ -1,4 +1,5 @@
 function objectsWithId = classifyObject(objects)
+    % classify bas
     idNumber = 1;
     objects{1}.id = idNumber; 
     
@@ -12,5 +13,8 @@ function objectsWithId = classifyObject(objects)
             
         end
     end
+
+
+
 objectsWithId = objects; 
 end

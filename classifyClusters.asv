@@ -1,0 +1,43 @@
+function objects = classifyClusters(clusters)
+
+ids = unique(cellfun(@(x) x.id, clusters));
+    for n = 1:length(ids)
+    
+    currentId = ids(n);
+    count = 0;
+    sumLength = 0; 
+    j = 1;
+    
+    for k = 1:length(clusters)-1
+       if clusters{k}.id == currentId
+          sumLength = sumLength + clusters{k}.length; 
+          count = count + 1;
+          deltaY = (clusters{k+1}.y - clusters{k}.y);
+          % if deltaY negative, object follows bycycle
+          if deltaY < 0.0
+              direction(j) = 1; 
+          else
+              direction(j) = 0; 
+          end
+       end 
+    end 
+    
+    mean_length_cluster = sumLength / count;  
+    
+    for m = 1:length(direction)
+        sum(direction); 
+    end
+
+    objects(n).id = currentId; 
+    objects(n).mean = mean_length_cluster;
+    if mean_length_cluster > 70
+       objects(n).class = "bus";
+    elseif mean_length_cluster <= 10
+       objects(n).class = "bycycle";
+    else
+       objects(n).class= "car";
+    end
+    
+      
+    end
+end

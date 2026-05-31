@@ -1,7 +1,10 @@
-function arrayOfClusterObjects = clusterSegements(x_scan_points, y_scan_points)
+function arrayOfSegments = clusterSegements(x_scan_points, y_scan_points)
     
     % vectorOfClusterObjects: (1.clusteredObject, 2.clusteredObject ...) 
     % clusteredObject: (1.Scannumber, 2.x_value, 3.y_value); 
+    meanValue.centerX = [];
+    meanValue.centerY = [];
+
     clusteredObject.numScan = []; 
     clusteredObject.x = [];
     clusteredObject.y = []; 
@@ -10,8 +13,8 @@ function arrayOfClusterObjects = clusterSegements(x_scan_points, y_scan_points)
 
     numScans = size(x_scan_points, 1); 
     numPoints = 421;
-    upper_threshold = 0.3; 
-    lower_threshold = 0.01; 
+    upper_threshold = 0.5; 
+    lower_threshold = 0.005; 
     segmentStarted = false; 
     lengthOfSegement = 1; 
     i = 1; j = 1;
@@ -41,20 +44,22 @@ function arrayOfClusterObjects = clusterSegements(x_scan_points, y_scan_points)
             else
                 if segmentStarted
                     
-                    centerX = mean(clusteredObject.x);
-                    centerY = mean(clusteredObject.y);
-                    clusteredObject.meanValue = [centerX, centerY];
-                    
+                    center_x = mean(clusteredObject.x);
+                    center_y = mean(clusteredObject.y);
+                    clusteredObject.meanValue.centerX = center_x;
+                    clusteredObject.meanValue.centerY = center_y;
+
                     lengthOfSegement = length(clusteredObject.x);
                     clusteredObject.length = lengthOfSegement;
                     
-                    arrayOfClusterObjects{i} = clusteredObject; 
+                    arrayOfSegments{i} = clusteredObject; 
                     i = i+1; 
                     segmentStarted=false;
                     clusteredObject.numScan = []; 
                     clusteredObject.x = [];
                     clusteredObject.y =[]; 
-                    clusteredObject.meanValue =[]; 
+                    clusteredObject.meanValue.centerX =[]; 
+                    clusteredObject.meanValue.centerY =[]; 
                     clusteredObject.length = [];
     
                 end
@@ -62,12 +67,13 @@ function arrayOfClusterObjects = clusterSegements(x_scan_points, y_scan_points)
         end
         if m == numPoints
                 if segmentStarted
-                    centerX = mean(clusteredObject.x);
-                    centerY = mean(clusteredObject.y);
-                    clusteredObject.meanValue = [centerX, centerY];
+                    center_x = mean(clusteredObject.x);
+                    center_y = mean(clusteredObject.y);
+                    clusteredObject.meanValue.centerX = center_x;
+                    clusteredObject.meanValue.centerY = center_y;
                     lengthOfSegement = length(clusteredObject.x);
                     clusteredObject.length = lengthOfSegement;
-                    arrayOfClusterObjects{i} = clusteredObject; 
+                    arrayOfSegments{i} = clusteredObject; 
                 end
         end
     end
