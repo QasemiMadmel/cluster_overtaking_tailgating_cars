@@ -25,12 +25,12 @@ for n = 1:length(ids)
     mean_length_cluster = sumLength / count;
 
     % determine direction
-    for k = 1:length(clusters)-1
+    for k = 1:length(clusters)-2
 
         if clusters{k}.id == currentId && ...
-           clusters{k+1}.id == currentId
+           clusters{k+2}.id == currentId
 
-            deltaY = clusters{k+1}.meanValue.centerY - ...
+            deltaY = clusters{k+2}.meanValue.centerY - ...
                      clusters{k}.meanValue.centerY;
 
             if deltaY < 0
@@ -47,7 +47,7 @@ for n = 1:length(ids)
     % majority vote for direction
     sumDir = sum(direction);
 
-    if sumDir > length(direction)/8
+    if sumDir > length(direction)/4
         objects(n).approaching = true;
     else
         objects(n).approaching = false;

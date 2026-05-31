@@ -55,40 +55,40 @@ function [v_mean, v_median, point_index_median] = ...
     ylabel('velocity median [km/h]')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-    v_right = v_median(:,1);
-    r_right = r_at_median(:,1);
-    
-    threshold = 5; % arbitary value of 20 km/H -> can be adapted later
-
-    idx_event = v_right > threshold;
-    
-    figure;
-    
-    plot(v_right, 'LineWidth',1.5);
-    hold on;
-    grid on;
-    
-    % display threshold 
-    yline(threshold, '--r', 'threshold');
-    
-    % mark peaks
-    plot(find(idx_event), v_right(idx_event), ...
-        'ro', 'MarkerSize',7, 'LineWidth',1.5);
-    
-    % write down the distances
-    for k = find(idx_event)'
-    
-        text(k, ...
-             v_right(k)+1, ...
-             sprintf('%.2f m', r_right(k)), ...
-             'FontSize',10, ...
-             'Color','red'); 
-    end
-    
-    xlabel('scan number');
-    ylabel('velocity mean [km/h]');
-    title('Velocity peaks and their corresponding distances');
-    legend('velocity', 'threshold', 'events');
+    % 
+    % v_right = v_median(:,1);
+    % r_right = r_at_median(:,1);
+    % 
+    % threshold = 5; % arbitary value of 20 km/H -> can be adapted later
+    % 
+    % idx_event = v_right > threshold;
+    % 
+    % figure;
+    % 
+    % plot(v_right, 'LineWidth',1.5);
+    % hold on;
+    % grid on;
+    % 
+    % % display threshold 
+    % yline(threshold, '--r', 'threshold');
+    % 
+    % % mark peaks
+    % plot(find(idx_event), v_right(idx_event), ...
+    %     'ro', 'MarkerSize',7, 'LineWidth',1.5);
+    % 
+    % % write down the distances
+    % for k = find(idx_event)'
+    % 
+    %     text(k, ...
+    %          v_right(k)+1, ...
+    %          sprintf('%.2f m', r_right(k)), ...
+    %          'FontSize',10, ...
+    %          'Color','red'); 
+    % end
+    % 
+    % xlabel('scan number');
+    % ylabel('velocity mean [km/h]');
+    % title('Velocity peaks and their corresponding distances');
+    % legend('velocity', 'threshold', 'events');
 
 end

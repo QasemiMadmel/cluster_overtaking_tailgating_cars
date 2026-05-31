@@ -11,7 +11,7 @@ cluster{1}.id = idNumber;
 
         % now calculate the distance between the meanpoints in
         % subsequent clusters; if the distance is below the defind
-        % threshold the current cluster is marked with the same id as the
+        % threshold, the current cluster is marked with the same id as the
         % previous one
         
         % subsequent scan is available: 
