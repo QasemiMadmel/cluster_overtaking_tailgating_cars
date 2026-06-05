@@ -1,4 +1,6 @@
 function heatmap(data)
+    
+    % heatmap for plotting velocities
     figure;
     imagesc(data*3.6); % [km/h]
     

@@ -5,8 +5,14 @@ function [filtered_median, filtered_mean] = alphaFilter(vel_median_vector_right_
     median_filtered = zeros(numberOfScans,1);
     mean_filtered   = zeros(numberOfScans,1);
 
-    alpha = 0.1;
-    beta  = 1 - alpha;
+    
+    alpha = 0.1; % weight of current median value 
+    beta  = 1 - alpha; % weight of the past measured value
+    
+    % both mean and median velocity are computed
+    % later only median is processed futher
+
+    % set the first value 
 
     if isnan(vel_median_vector_right_area(1))
         median_filtered(1) = 0;
@@ -20,9 +26,10 @@ function [filtered_median, filtered_mean] = alphaFilter(vel_median_vector_right_
         mean_filtered(1) = vel_mean_vector_right_area(1);
     end
 
-
+    % go over the next scans and filter: 
+    % filter value = 0.1 * current_measurment + 0.9 * last_measurement
+    
     for n = 2:numberOfScans
-
 
         if isnan(vel_median_vector_right_area(n))
             median_filtered(n) = median_filtered(n-1);

@@ -54,7 +54,7 @@ for n = 1:length(ids)
     % zeros mean -> moves away, noise and wrong values are still possible
     % if the vector contains a lot of ones, the cluster is probably moving
     % toward sensor 
-
+    
     if sumDir > length(direction)/4
         objects(n).approaching = true;
     else
@@ -67,12 +67,14 @@ for n = 1:length(ids)
     % store mean cluster size
     objects(n).mean = mean_length_cluster;
 
-    % % classify object
-    % if mean_length_cluster <= 10
-    %     objects(n).class = "bicycle";
-    % 
-    % else
-    %     objects(n).class = "car";
-    % end
+    % classify object
+    if mean_length_cluster <= 10
+        objects(n).class = "bicycle";
+
+    else
+        objects(n).class = "car";
+    end
+
 end
+
 end

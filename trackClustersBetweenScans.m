@@ -1,4 +1,4 @@
-function objectsWithId = trackClustersBetweenScans(cluster)
+function clustersWithId = trackClustersBetweenScans(cluster)
     
 % classify based on the scannumber 
 % clusters in subsequent frames get the same id number (max number of gaps: 3 frames)
@@ -74,5 +74,5 @@ cluster{1}.id = idNumber;
         end
     end
 
-objectsWithId = cluster; 
+clustersWithId = cluster; 
 end

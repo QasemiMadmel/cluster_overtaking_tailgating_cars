@@ -2,6 +2,7 @@ function [x_filtered, y_filtered, vx_filtered, vy_filtered, v_filtered, rssi_fil
  
 numberOfScans = floor(length(v)/numberOfPointsPerScan); 
 
+% empty vectors to store filtered values
 x_filtered = zeros(numberOfScans, numberOfPointsPerScan); 
 y_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 vx_filtered = zeros(numberOfScans, numberOfPointsPerScan);
@@ -9,6 +10,9 @@ vy_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 v_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 rssi_filterd = zeros(numberOfScans, numberOfPointsPerScan);
 r_filtered = zeros(numberOfScans, numberOfPointsPerScan);
+
+% initialize a mask vector that stores only true values for indicies of
+% valid velocties
 
 mask_for_valid_values = zeros(1, numberOfPointsPerScan); 
 
@@ -25,7 +29,7 @@ for i = 1:numberOfScans
     rssi_scan = rssi(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     r_scan = r(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
 
-    % mask the proper values
+    % thresholds to mask the proper values
     upper_threshold = 20; 
     lower_threshold = 0; 
 

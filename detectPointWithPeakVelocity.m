@@ -11,6 +11,7 @@ threshold_distance_max = 3;
 threshold_distance_min = 0.5;
 danger= []; 
 
+% check the distances for points with high velocity
 for n = 1:scanNumber
     if v_med(n) > threshold_velocity(n)
         if rssi(n,median_indicies(n,1)) >= threshold_rssi

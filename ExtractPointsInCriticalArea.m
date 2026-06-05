@@ -10,10 +10,16 @@ threshold_y_min = 0.2;
 % mark points that enter this area
 % area: (x < 3 ; y < 2) 
 
+% go over all scans
 for i = 1 : numScans
+
+    % store the current scan
     scan_current_x = scan_x_values(i,:);
     scan_current_y = scan_y_values(i,:);
     
+    % in each scan go over all points and check wethear they within the
+    % desired thresholds 
+
     for n = 1: numPoints
         if scan_current_x(n) > threshold_x_min && scan_current_x(n) < threshold_x_max
             if scan_current_y(n) > threshold_y_min && scan_current_y(n) < threshold_y_max

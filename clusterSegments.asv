@@ -76,7 +76,6 @@ function arrayOfSegments = clusterSegements(x_scan_points, y_scan_points)
                 end
             end
         end
-        % if the last point in a scan (critical area) is within a segment: 
         if m == numPoints
                 if segmentStarted
                     center_x = mean(clusteredSegement.x);

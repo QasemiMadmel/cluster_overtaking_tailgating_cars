@@ -8,6 +8,7 @@ mergedClusters = {};
 used = false(1, length(segments)); % make a mask array to keep track of handled segments in a single scan 
 j = 1;
 
+% go over all segments
 for i = 1:length(segments)
 
     if used(i)
@@ -16,7 +17,10 @@ for i = 1:length(segments)
 
     current = segments{i};
     used(i) = true;
-
+    
+    % compare each segment to all other segments within scan except the
+    % segment itself
+    
     for k = i+1:length(segments)
 
         if used(k)
@@ -47,6 +51,7 @@ for i = 1:length(segments)
         end
     end
 
+    % store as merged only if the size is greater than 3
     if current.length >= min_cluster_size
         mergedClusters{j} = current;
         j = j + 1;
