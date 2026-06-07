@@ -1,4 +1,4 @@
-function [x_filtered, y_filtered, vx_filtered, vy_filtered, v_filtered, rssi_filterd, r_filtered] = filterAllValuesWithProperVelocities(x, y, vx, vy, v, rssi, r, numberOfPointsPerScan)
+function [x_filtered, y_filtered, vx_filtered, vy_filtered, v_filtered, r_filtered] = filterAllValuesWithProperVelocities(x, y, vx, vy, v, r, numberOfPointsPerScan)
  
 numberOfScans = floor(length(v)/numberOfPointsPerScan); 
 
@@ -8,7 +8,6 @@ y_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 vx_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 vy_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 v_filtered = zeros(numberOfScans, numberOfPointsPerScan);
-rssi_filterd = zeros(numberOfScans, numberOfPointsPerScan);
 r_filtered = zeros(numberOfScans, numberOfPointsPerScan);
 
 % initialize a mask vector that stores only true values for indicies of
@@ -26,7 +25,6 @@ for i = 1:numberOfScans
     y_scan = y(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     vx_scan = vx(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     vy_scan = vy(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
-    rssi_scan = rssi(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     r_scan = r(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
 
     % thresholds to mask the proper values
@@ -41,7 +39,6 @@ for i = 1:numberOfScans
     y_scan(~mask_for_valid_values) = NaN; 
     vx_scan(~mask_for_valid_values) = NaN; 
     vy_scan(~mask_for_valid_values) = NaN; 
-    rssi_scan(~mask_for_valid_values) = NaN; 
     r_scan(~mask_for_valid_values) = NaN; 
 
     % filter all files based on proper velocity values
@@ -50,7 +47,6 @@ for i = 1:numberOfScans
     y_filtered(i,:) = y_scan; 
     vx_filtered(i,:) = vx_scan; 
     vy_filtered(i,:) = vy_scan; 
-    rssi_filterd(i,:) = rssi_scan;
     r_filtered(i,:) = r_scan; 
 
     % get ready for the next scan

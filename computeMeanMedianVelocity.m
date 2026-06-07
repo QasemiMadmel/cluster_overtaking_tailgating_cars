@@ -34,22 +34,22 @@ function [v_mean, v_median, point_index_median] = computeMeanMedianVelocity(v, r
     end
 
     % plot v_mean and v_median
-    figure;
-    plot(v_mean(:,1)); hold on; 
-    plot(v_mean(:,2)); 
-    legend('right area', 'whole scan');
-    title('mean values per scan');
-    xlabel('number of scans')
-    ylabel('velocity mean [km/h]')
-    
-    
-    figure; 
-    plot(v_median(:,1)); hold on; 
-    plot(v_median(:,2)); 
-    legend('right area', 'whole scan');
-    title('median values per scan');
-    xlabel('number of scans')
-    ylabel('velocity median [km/h]')
+    % figure;
+    % plot(v_mean(:,1)); hold on; 
+    % plot(v_mean(:,2)); 
+    % legend('right area', 'whole scan');
+    % title('mean values per scan');
+    % xlabel('number of scans')
+    % ylabel('velocity mean [km/h]')
+    % 
+    % 
+    % figure; 
+    % plot(v_median(:,1)); hold on; 
+    % plot(v_median(:,2)); 
+    % legend('right area', 'whole scan');
+    % title('median values per scan');
+    % xlabel('number of scans')
+    % ylabel('velocity median [km/h]')
  
 
 end

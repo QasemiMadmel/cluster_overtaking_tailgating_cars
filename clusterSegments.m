@@ -12,7 +12,8 @@ function arrayOfSegments = clusterSegements(x_scan_points, y_scan_points)
     clusteredSegement.length = [];
 
     numScans = size(x_scan_points, 1); 
-    numPoints = 421;
+    numPoints = size(x_scan_points, 2);
+
     
     % thresholds for distances between two neighbouring points
     upper_threshold = 0.5; 
@@ -37,8 +38,8 @@ function arrayOfSegments = clusterSegements(x_scan_points, y_scan_points)
             end
             
             % compute the distance between two neighbouring points
-            dx = x_scan_points(n,m) - x_scan_points(n,m-1);
-            dy = y_scan_points(n,m) - y_scan_points(n,m-1);
+            dx = abs(x_scan_points(n,m) - x_scan_points(n,m-1));
+            dy = abs(y_scan_points(n,m) - y_scan_points(n,m-1));
        
             distance = sqrt(dx^2 + dy^2);
         

@@ -1,14 +1,21 @@
-function  [scan_current_x_close, scan_current_y_close] = ExtractPointsInCriticalArea(scan_x_values, scan_y_values)
+function  [scan_current_x_close, scan_current_y_close, scan_current_x_sensor_back, scan_current_y_sensor_back] = ExtractPointsInCriticalArea(scan_x_values, scan_y_values)
  
 numScans = size(scan_x_values, 1);
 numPoints = 421; 
+
+% threshlods for area on the left side of sensor (where cars usually overtake)
 threshold_x_max = 3;
 threshold_x_min = 0.2;
 threshold_y_max = 2;
 threshold_y_min = 0.2;
 
-% mark points that enter this area
-% area: (x < 3 ; y < 2) 
+% thresholds for the area directly in fornt of the sensor (rear of bycycle)
+threshold_x_back_max = 1.2; 
+threshold_x_back_min = -0.5; 
+threshold_y_back_max = 4; 
+threshold_y_back_min = 0.2; 
+
+% mark points that enter these areas
 
 % go over all scans
 for i = 1 : numScans
@@ -25,6 +32,11 @@ for i = 1 : numScans
             if scan_current_y(n) > threshold_y_min && scan_current_y(n) < threshold_y_max
                scan_current_x_close(i,n) = scan_current_x(n);
                scan_current_y_close(i,n) = scan_current_y(n);
+            end
+        elseif scan_current_x(n) > threshold_x_back_min && scan_current_x(n) < threshold_x_back_max
+            if scan_current_y(n) > threshold_y_back_min && scan_current_y(n) < threshold_y_back_max
+                scan_current_x_sensor_back(i,n) = scan_current_x(n);
+                scan_current_y_sensor_back(i,n) = scan_current_y(n);
             end
         else 
             scan_current_x_close(i,n) = NaN; 
