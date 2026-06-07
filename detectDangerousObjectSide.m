@@ -1,11 +1,15 @@
-function all_dangerous_clusters = detectDangerousObject(all_clusters, object_properties, ego_velocity_mean)
+function all_dangerous_clusters_side = detectDangerousObjectSide(all_clusters, object_properties, ego_velocity_mean)
+
+all_dangerous_clusters = [];
 
 % danger = [scannumber, cluster id, mean_to_origin]
+
 danger.scannumber = [];
 danger.clusterId = [];
 danger.meanToOrigin = [];
 danger.egoVelocity = [];
 threshold_distance_to_sensor = 2; 
+threshold_ego_velocity = 0.6; % ~ 2 km/h
 j = 1; 
 
 % go over all clusters
@@ -27,13 +31,13 @@ for i = 1:length(all_clusters)-1
         % Is objects center distance too close? Is it moving toward sensor? Is the bycycle sationary or moving? 
         if distance_cluster_to_origin < threshold_distance_to_sensor && ...
             object_properties(objectIndex).approaching && ...
-            ego_velocity_mean(all_clusters{i}.numScan) > 0.6  % ~ > 2km/h  
+            ego_velocity_mean(all_clusters{i}.numScan) > threshold_ego_velocity  % ~ > 5 km/h  
                 % mark as dangerous 
                 danger.scannumber = all_clusters{i}.numScan; 
                 danger.clusterId = currentId;
                 danger.meanToOrigin = distance_cluster_to_origin;
                 danger.egoVelocity = ego_velocity_mean(i); 
-                all_dangerous_clusters{j}= danger; 
+                all_dangerous_clusters_side{j}= danger; 
                 j = j+1; 
         end 
         danger.scannumber = [];
