@@ -3,7 +3,6 @@ function all_dangerous_clusters_side = detectDangerousObjectSide(all_clusters, o
 all_dangerous_clusters_side = [];
 
 % danger = [scannumber, cluster id, mean_to_origin]
-
 danger.scannumber = [];
 danger.x = [];
 danger.y = [];
@@ -26,11 +25,11 @@ for i = 1:length(all_clusters)-1
     currentId = all_clusters{i}.id; 
    
     % get the index of current cluster
-    objectIndex = find([object_properties.id] == currentId, 1);
+    objectIndex = find([object_properties.id] == currentId, 1); % 1 means to return the first object found
     
     if ~isempty(objectIndex)
         
-        % Is objects center distance too close? Is it moving toward sensor? Is the bycycle sationary or moving? 
+        % Is objects center distance too close? Is it moving toward sensor? Is the bicycle sationary or moving? 
         if distance_cluster_to_origin < threshold_distance_to_sensor && ...
             object_properties(objectIndex).approaching && ...
             ego_velocity_mean(all_clusters{i}.numScan) > threshold_ego_velocity  % ~ > 2 km/h  

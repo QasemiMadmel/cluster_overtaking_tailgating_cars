@@ -1,38 +1,38 @@
 function trimLidarData(filepath_xy, filepath_r, filepath_v, scanStart, scanEnd)
 
 clc;
-
-% ===== Parameter =====
+% ===== parameter =====
 scanPoints   = 421;  % XY / R / V
-medianPoints = 4;    % Median-Datei
 
 % ===== Load =====
 xy = readmatrix(filepath_xy);       % [t x y]
 r  = readmatrix(filepath_r);        % [t idx r]
 v  = readmatrix(filepath_v);        % [t vx vy v]
 
-% ===== Extract =====
+% ===== extract data =====
 t_xy = xy(:,1); x = xy(:,2); y = xy(:,3);
 t_r  = r(:,1);  idx = r(:,2); rval = r(:,3);
 t_v  = v(:,1);  vx = v(:,2); vy = v(:,3); vabs = v(:,4);
 
-% ===== Scan counts =====
+% ===== scan counts =====
 numScans_xy = floor(length(x)/scanPoints);
 numScans_v  = floor(length(vx)/scanPoints);
 
 fprintf('Scans XY  (raw): %d\n', numScans_xy);
 fprintf('Scans V   (raw): %d\n', numScans_v);
 
-diffScans = numScans_xy - numScans_v;
+diffScans = numScans_xy - numScans_v; 
+% scannumber can be higher then the computed velocities because 
+% velocities are normally calculated between two subsequent scans 
 
 % =====================================================
-% 1. ALIGNMENT (XY, R, RSSI!)
+% 1. Alighning the files based on their scan numbers (XY, R, RSSI!)
+% delete scans from the beginning of the recording
 % =====================================================
-
 if diffScans > 0
-    fprintf('Aligning: removing first %d scan(s) from XY + R\n', diffScans);
+    fprintf('Aligning: removing first %d scan(s) from XY and R\n', diffScans);
     
-    shift = diffScans * scanPoints;
+    shift = diffScans * scanPoints; 
     
     t_xy = t_xy(shift+1:end);
     x    = x(shift+1:end);
@@ -41,10 +41,9 @@ if diffScans > 0
     t_r  = t_r(shift+1:end);
     idx  = idx(shift+1:end);
     rval = rval(shift+1:end);
-
 end
 
-% ===== Neue Scananzahlen =====
+% ===== update the scannumber after the shift =====
 numScans_xy = floor(length(x)/scanPoints);
 numScans_v  = floor(length(vx)/scanPoints);
 
@@ -52,11 +51,11 @@ fprintf('After alignment:\n');
 fprintf('XY scans: %d\n', numScans_xy);
 fprintf('V  scans: %d\n', numScans_v);
 
-% gemeinsame Basis !!!
+% take the lowst scannumber as basic scan number for both files 
 numScans = min([numScans_xy, numScans_v]);
 
 % =====================================================
-% Parameter Handling
+% handling parameters
 % =====================================================
 if scanStart == 0
     scanStart = 1;
@@ -67,12 +66,12 @@ if scanEnd == 0
 end
 
 if scanEnd > numScans
-    warning('scanEnd reduziert auf %d', numScans);
+    warning('scanEnd reduced to %d', numScans);
     scanEnd = numScans;
 end
 
 if scanStart < 1 || scanStart > numScans
-    error('scanStart ungültig');
+    error('scanStart not varrified');
 end
 
 if scanEnd < scanStart
@@ -82,11 +81,11 @@ end
 fprintf('Final scan range: %d → %d\n', scanStart, scanEnd);
 
 % =====================================================
-% 2. HINTEN ABSCHNEIDEN
+% 2. cutting the scans at the end of the files; 
+% example file: (------scanStart-----------scanEnd-----)
 % =====================================================
 
 endIdx = scanEnd * scanPoints;
-endIdx_m = scanEnd * medianPoints;
 
 t_xy = t_xy(1:endIdx);
 x    = x(1:endIdx);
@@ -102,10 +101,12 @@ vy    = vy(1:endIdx);
 vabs  = vabs(1:endIdx);
 
 % =====================================================
-% 3. VORNE ABSCHNEIDEN
+% 3. cutting the first scans based on given function parameter
 % =====================================================
 startIdx = (scanStart-1)*scanPoints + 1;
-startIdx_m = (scanStart-1)*medianPoints + 1;
+% example first two scans should be deleted (scanStart: 3)
+% (3-1)*numberOfPoints = number of Points to delete!
+% Index to Start the scans = numberOfPointsToDelete + 1
 
 t_xy = t_xy(startIdx:end);
 x    = x(startIdx:end);
@@ -121,18 +122,25 @@ vy    = vy(startIdx:end);
 vabs  = vabs(startIdx:end);
 
 % =====================================================
-% FINAL CHECK
+% print the final scan number 
 % =====================================================
 fprintf('--- FINAL CHECK ---\n');
 fprintf('XY scans: %d\n', floor(length(x)/scanPoints));
 fprintf('V  scans: %d\n', floor(length(vx)/scanPoints));
 
 % =====================================================
-% SAVE
+% store in new files with _TRIMMED as suffix 
 % =====================================================
+% fileparts deliver : (folder: the path for the folder data is stored in,
+% name_... the name of file
+% ~ the ending .csv
+
 [folder, name_xy, ~] = fileparts(filepath_xy);
 [~, name_r, ~]       = fileparts(filepath_r);
 [~, name_v, ~]       = fileparts(filepath_v);
+
+% fullfile: creares a file in the folder with the given name
+% writematrix: writes the vectors in the given files
 
 writematrix([t_xy x y], ...
     fullfile(folder, [name_xy '_TRIMMED.csv']));
@@ -143,8 +151,7 @@ writematrix([t_r idx rval], ...
 writematrix([t_v vx vy vabs], ...
     fullfile(folder, [name_v '_TRIMMED.csv']));
 
-
-fprintf('DONE. Alle Dateien korrekt geschnitten.\n');
+fprintf('DONE. all files are trimmed.\n');
 
 end
 

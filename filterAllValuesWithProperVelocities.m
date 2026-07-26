@@ -31,9 +31,12 @@ for i = 1:numberOfScans
     upper_threshold = 20; 
     lower_threshold = 0; 
 
+    % store an array of 1's and 0's for valid values within the velocity
+    % threshold based on vector indicies
     mask_for_valid_values = (v_scan<upper_threshold & v_scan>lower_threshold); 
 
-    % set everything else to NaN
+    % flip the mask and set all unvalid values 
+    % (velocties above and below thresholds) to NaN in the scan scan
     v_scan(~mask_for_valid_values) = NaN; 
     x_scan(~mask_for_valid_values) = NaN; 
     y_scan(~mask_for_valid_values) = NaN; 
@@ -41,6 +44,8 @@ for i = 1:numberOfScans
     vy_scan(~mask_for_valid_values) = NaN; 
     r_scan(~mask_for_valid_values) = NaN; 
 
+    % store filtered values in matricies
+    % each line represents one scan
     % filter all files based on proper velocity values
     v_filtered(i,:) = v_scan; 
     x_filtered(i,:) = x_scan;

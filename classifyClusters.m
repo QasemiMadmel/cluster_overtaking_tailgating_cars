@@ -1,6 +1,10 @@
 function objects = classifyClusters(clusters)
 
-ids = unique(cellfun(@(x) x.id, clusters));
+% cellfun(function, cellarray) -> anonyme function (@x x.id : take element x from cellarray and return x.id)
+% Result is a vector of all id's from clusters [1, 1, 2, 2, 2, 2, 3, 4, 4, 5, ...]
+% unique returns a sorted array with no repeatition of the values [1 ,2 , 3, 4, 5, ...]
+
+ids = unique(cellfun(@(x) x.id, clusters)); % extract and sort all id's 
 
 for n = 1:length(ids)
 
@@ -12,18 +16,6 @@ for n = 1:length(ids)
     % a vector of ones and zeros to keep track of direction
     direction = [];
     j = 1;
-
-    % calculate mean cluster size
-    for k = 1:length(clusters)
-
-        if clusters{k}.id == currentId
-            sumLength = sumLength + clusters{k}.length;
-            count = count + 1;
-        end
-
-    end
-
-    mean_length_cluster = sumLength / count;
 
     % determine direction
     % go over all clusters
@@ -48,7 +40,8 @@ for n = 1:length(ids)
         end
     end
 
-    % majority vote for direction (add all values in direction data for this cluster)
+    % majority vote for direction 
+    % (add all values in direction data for this cluster)
     sumDir = sum(direction);
 
     % zeros mean -> moves away, noise and wrong values are still possible
@@ -64,15 +57,5 @@ for n = 1:length(ids)
     % store id
     objects(n).id = currentId;
 
-    % store mean cluster size
-    objects(n).mean = mean_length_cluster;
-
-    % % classify object
-    % if mean_length_cluster <= 10
-    %     objects(n).class = "bicycle";
-    % 
-    % else
-    %     objects(n).class = "car";
-    % end
 end
 end

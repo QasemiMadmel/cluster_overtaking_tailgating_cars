@@ -9,8 +9,8 @@ danger.x = [];
 danger.y = [];
 danger.meanToOrigin = [];
 danger.egoVelocity = [];
-threshold_distance_to_sensor = 2; 
-threshold_ego_velocity = 5; % ~ 18 km/h
+threshold_distance_to_sensor = 5; 
+threshold_ego_velocity = 2; % ~ 18 km/h
 j = 1; 
 
 % go over all clusters
@@ -29,9 +29,9 @@ for i = 1:length(all_clusters)-1
     
     if ~isempty(objectIndex)
         
-        % Is objects center distance too close? Is it moving toward sensor? Is the bycycle sationary or moving? 
+        % Is objects center distance too close? Is it moving toward sensor? Is the bicycle sationary or moving? 
         if distance_cluster_to_origin < threshold_distance_to_sensor && ...
-            ego_velocity_mean(all_clusters{i}.numScan) > threshold_ego_velocity  % ~ > 5 km/h  
+            ego_velocity_mean(all_clusters{i}.numScan) > threshold_ego_velocity  % ~ > 18 km/h  
                 % mark as dangerous 
                 danger.scannumber = all_clusters{i}.numScan; 
                 danger.clusterId = currentId;

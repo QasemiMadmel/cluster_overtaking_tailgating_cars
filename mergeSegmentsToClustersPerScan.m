@@ -1,10 +1,10 @@
-function mergedClusters = mergeSegmentsToClustersPerScan(segments)
+function mergedSegments = mergeSegmentsToClustersPerScan(segments)
 
 threshold_x = 0.5;
 threshold_merge = 0.7; 
 min_cluster_size = 3; 
 
-mergedClusters = {};
+mergedSegments = {};
 used = false(1, length(segments)); % make a mask array to keep track of handled segments in a single scan 
 j = 1;
 
@@ -40,9 +40,11 @@ for i = 1:length(segments)
 
         if distance_mean < threshold_merge || deltaX < threshold_x
 
+            % append the x and y arrays for same clusters
             current.x = [current.x, segments{k}.x];
             current.y = [current.y, segments{k}.y];
 
+            % calculate a new mean nd length
             current.meanValue.centerX = mean(current.x);
             current.meanValue.centerY = mean(current.y);
             current.length = length(current.x);
@@ -53,7 +55,7 @@ for i = 1:length(segments)
 
     % store as merged only if the size is greater than 3
     if current.length >= min_cluster_size
-        mergedClusters{j} = current;
+        mergedSegments{j} = current;
         j = j + 1;
     end
 end

@@ -1,0 +1,93 @@
+function arrayOfSegments = findSegements(x_scan_points, y_scan_points)
+    
+    % arrayOfSegments: (1.segment, 2.segment ...) 
+    % clusteredSegment: (1.Scannumber, 2.x_value, 3.y_value, 4.[mean.mean_x, mean.mean_y] 5.length); 
+
+    clusteredSegement.numScan = []; 
+    clusteredSegement.x = [];
+    clusteredSegement.y = []; 
+    meanValue.centerX = [];
+    meanValue.centerY = [];
+    clusteredSegement.meanValue = [];
+    clusteredSegement.length = [];
+
+    numScans = size(x_scan_points, 1);  % number of rows in matrix
+    numPoints = size(x_scan_points, 2); % number of columns in matrix
+
+    % thresholds for distances between two neighbouring points
+    upper_threshold = 0.5; 
+    lower_threshold = 0.005; 
+    
+    segmentStarted = false; 
+    lengthOfSegement = 1; 
+    
+    i = 1; m = 2; 
+     
+    % go over all scans
+    for n = 1:numScans
+
+        % flag to keep track of segments
+        segmentStarted= false;
+        
+        % go over all points in a single scan
+        for m = 2:numPoints
+    
+            % if x is NaN corresponding y is also NaN
+            if isnan(x_scan_points(n,m-1)) || isnan(x_scan_points(n,m))
+                continue;
+            end
+            
+            % compute the distance between two neighbouring points
+            dx = abs(x_scan_points(n,m) - x_scan_points(n,m-1));
+            dy = abs(y_scan_points(n,m) - y_scan_points(n,m-1));
+       
+            distance = sqrt(dx^2 + dy^2);
+        
+            % if points are close to each other 
+            if distance < upper_threshold && distance > lower_threshold
+                segmentStarted = true; 
+                clusteredSegement.numScan = n; % overwriting the same struct for this element
+                clusteredSegement.x(end+1) = x_scan_points(n,m-1); % adding new points to this element of the struct
+                clusteredSegement.y(end+1) = y_scan_points(n,m-1);             
+            else
+                % after the first segment is over, store its length and
+                % center point
+                if segmentStarted
+                    
+                    center_x = mean(clusteredSegement.x);
+                    center_y = mean(clusteredSegement.y);
+                    clusteredSegement.meanValue.centerX = center_x;
+                    clusteredSegement.meanValue.centerY = center_y;
+
+                    lengthOfSegement = length(clusteredSegement.x);
+                    clusteredSegement.length = lengthOfSegement;
+                    
+                    % add to the vector of all segments and empty the
+                    % struct for the next segment to be stored
+                    arrayOfSegments{i} = clusteredSegement; 
+                    i = i+1; 
+                    segmentStarted=false;
+                    clusteredSegement.numScan = []; 
+                    clusteredSegement.x = [];
+                    clusteredSegement.y =[]; 
+                    clusteredSegement.meanValue.centerX =[]; 
+                    clusteredSegement.meanValue.centerY =[]; 
+                    clusteredSegement.length = [];
+    
+                end
+            end
+        end
+        % if the last point in a scan (critical area) is within a segment: 
+        if m == numPoints
+                if segmentStarted
+                    center_x = mean(clusteredSegement.x);
+                    center_y = mean(clusteredSegement.y);
+                    clusteredSegement.meanValue.centerX = center_x;
+                    clusteredSegement.meanValue.centerY = center_y;
+                    lengthOfSegement = length(clusteredSegement.x);
+                    clusteredSegement.length = lengthOfSegement;
+                    arrayOfSegments{i} = clusteredSegement; 
+                end
+        end
+    end
+end

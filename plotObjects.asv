@@ -138,6 +138,7 @@ for n = 1:numScans
                 'FontSize',10);
 
         end
+
     end
 
     axis equal;
@@ -146,8 +147,9 @@ for n = 1:numScans
 
     xlim([-8 8]);
     ylim([-8 8]);
-    % draw and pause for animation effect
-    drawnow;  
+
+    drawnow;
+
     pause(0.01);
 
 end
