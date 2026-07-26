@@ -9,7 +9,7 @@ danger.y = [];
 danger.clusterId = [];
 danger.meanToOrigin = [];
 danger.egoVelocity = [];
-threshold_distance_to_sensor = 2; 
+threshold_distance_to_sensor = 1.5; 
 threshold_ego_velocity = 0.6; % ~ 2 km/h
 j = 1; 
 
@@ -19,9 +19,22 @@ for i = 1:length(all_clusters)-1
     % get their center
     x_mean = all_clusters{i}.meanValue.centerX;
     y_mean = all_clusters{i}.meanValue.centerY;
+    
+    % get the corner of the cluster
+    [y_min_corner, index_y_min_corner] = min(all_clusters{i}.y); 
+    x_corresponding_to_y_min = all_clusters{i}.x(index_y_corner); 
 
-    % calculate thier distance 
+    [x_min_corner, index_x_min_corner] = min(all_clusters{i}.x); 
+ 
+    % calculate all distances: mean_to-origin, min(y) lateral distance,  min(x) lateral distance 
     distance_cluster_to_origin = sqrt(x_mean^2 +y_mean^2);
+    
+    distance_corner_origin = sqrt(x_corresponding_to_y_min^2 + y_min_corner^2);
+    lateral_distance_y_min = x_corresponding_to_y_min; 
+    lateral_distance_x_min = y_
+
+    
+    % get the ID 
     currentId = all_clusters{i}.id; 
    
     % get the index of current cluster
@@ -30,7 +43,7 @@ for i = 1:length(all_clusters)-1
     if ~isempty(objectIndex)
         
         % Is objects center distance too close? Is it moving toward sensor? Is the bicycle sationary or moving? 
-        if distance_cluster_to_origin < threshold_distance_to_sensor && ...
+        if lateral_distance < threshold_distance_to_sensor && ...
             object_properties(objectIndex).approaching && ...
             ego_velocity_mean(all_clusters{i}.numScan) > threshold_ego_velocity  % ~ > 2 km/h  
                 % mark as dangerous 

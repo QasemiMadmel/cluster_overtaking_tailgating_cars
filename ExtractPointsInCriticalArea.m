@@ -4,7 +4,7 @@ numScans = size(scan_x_values, 1); % number of rows -> scanNumber
 numPoints = 421; 
 
 % threshlods for area on the left side of sensor (where cars usually overtake)
-threshold_x_max = 3;
+threshold_x_max = 5;
 threshold_x_min = 0.2;
 threshold_y_max = 2;
 threshold_y_min = 0.2;
