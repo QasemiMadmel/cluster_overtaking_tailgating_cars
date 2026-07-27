@@ -1,4 +1,4 @@
-function [v_mean, v_median, point_index_median] = computeMeanMedianVelocity(v, r, numberOfPointsPerScan)
+function [v_mean, v_median, t_at_median, point_index_median] = computeMeanMedianVelocity(v, r, t, numberOfPointsPerScan)
  
     numberOfScans = size(v,1); % number of rows
     middle_of_scan = floor(numberOfPointsPerScan/2);  
@@ -10,10 +10,12 @@ function [v_mean, v_median, point_index_median] = computeMeanMedianVelocity(v, r
     % 2: mean values for left area of scan, 
     % 3: mean values for the whole scan 
     % each row (n) is one scan 
-
+    t_matrix = reshape(t, numberOfPointsPerScan, []).';
+    
     for n = 1:numberOfScans
         v_scan = v(n,:); 
         r_scan = r(n,:);
+        t_scan = t_matrix(n,:);
         
         % right area 
         r_temp = r_scan(start:middle_of_scan);
@@ -25,6 +27,7 @@ function [v_mean, v_median, point_index_median] = computeMeanMedianVelocity(v, r
         [~, idx_med] = min(abs(v_temp - v_med(n,1))); % find the index of the median value
         v_median(n,1) = v_med(n,1)*3.6; % in [km/h]
         r_at_median(n,1) = r_temp(idx_med); % find the corresponding distance
+        t_at_median(n) = t_scan(idx_med);
         point_index_median(n,1) = idx_med; % store the median index for later to find car_overtaking_events
 
         % whole scan 

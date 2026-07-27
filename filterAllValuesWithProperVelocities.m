@@ -25,7 +25,7 @@ for i = 1:numberOfScans
     y_scan = y(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     vx_scan = vx(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
     vy_scan = vy(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
-    r_scan = r(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1);
+    r_scan = r(idx_point_in_file : idx_point_in_file + numberOfPointsPerScan-1); 
 
     % thresholds to mask the proper values
     upper_threshold = 20; 

@@ -1,0 +1,21 @@
+function acceleration = deriveVelocity(t, v)
+
+t = t(:);
+v = v(:); 
+
+
+interval = diff(t); 
+acceleration = diff(v) ./interval; 
+
+time(1) = 0; 
+for n =  1 : numel(interval)-1
+    time(n+1) = time(n)+interval(n);
+end
+
+figure; 
+plot(time, acceleration); 
+grid on; 
+xlabel('time/s');
+ylabel('acceleration/ m/s^2'); 
+
+end

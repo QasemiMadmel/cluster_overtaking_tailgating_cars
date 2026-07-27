@@ -1,4 +1,4 @@
-function all_dangerous_clusters_back = detectDangerousObjectBack(all_clusters, object_properties, ego_velocity_mean, acceleration)
+function all_dangerous_clusters_back = detectDangerousObjectBack(all_clusters, object_properties, ego_velocity_mean)
 
 all_dangerous_clusters_back = [];
 
@@ -11,7 +11,7 @@ danger.meanToOrigin = [];
 danger.egoVelocity = [];
 
 threshold_distance_to_sensor = 6; 
-threshold_ego_velocity = 1; 
+threshold_ego_velocity = 2; % ~ 7 km/h
 residual_distance = 1; 
 
 j = 1; 
@@ -48,18 +48,10 @@ for i = 1:length(all_clusters)-1
         
         % braking condition requires adapted threshold distance to cyclist
         elseif (deceleration && velocity > threshold_ego_velocity)
-            braking_distance = computeBrakingDistance(velocity, acceleration);
+            braking_distance = computeBrakingDistance(velocity, deceleration);
             threshold_distance_to_sensor = residual_distance + braking_distance; 
             if distance_cluster_to_origin < threshold_distance_to_sensor
-                danger.scannumber = all_clusters{i}.numScan; 
-                danger.clusterId = currentId;
-                danger.x = all_clusters{i}.x;
-                danger.y = all_clusters{i}.y;
-                danger.meanToOrigin = distance_cluster_to_origin;
-                danger.egoVelocity = velocity; 
-                all_dangerous_clusters_back{j} = danger; 
-                j = j + 1; 
-            end
+                
         end 
         danger.scannumber = [];
         danger.clusterId = [];

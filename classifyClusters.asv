@@ -57,18 +57,15 @@ for n = 1:length(ids)
     % store id
     objects(n).id = currentId;
     
-    objects(n).braking = false; 
-    % braking condition
-    scannumber = clusters{k}.numScan; 
+
+    scannumber = clusters{k}.numscan; 
     if scannumber > 5 
-        if (acceleration(scannumber) < 0 && ...
-            acceleration(scannumber-1) < 0 && ...
-            acceleration(scannumber-2) < 0 && ...
-            acceleration(scannumber-3) < 0)
-            
+        if (acceleration(scannumber) < 0 ...
+                acceleration(scannumber-1) < 0 && ...
+                acceleration(scannumber-2) < 0 && ...
+                acceleration(scannumber-3) < 0)
             objects(n).braking = true; 
         end
     end
-
 end
 end
