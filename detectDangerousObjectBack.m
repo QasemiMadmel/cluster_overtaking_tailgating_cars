@@ -10,9 +10,10 @@ danger.y = [];
 danger.meanToOrigin = [];
 danger.egoVelocity = [];
 
-threshold_distance_to_sensor = 6; 
-threshold_ego_velocity = 1; 
+threshold_distance_to_sensor = 5; % 6m required at least
+threshold_ego_velocity = 3; 
 residual_distance = 1; 
+ego_velocitiy_history = []; 
 
 j = 1; 
 
@@ -34,40 +35,46 @@ for i = 1:length(all_clusters)-1
     velocity = ego_velocity_mean(all_clusters{i}.numScan);
     deceleration = object_properties(objectIndex).braking; % true means cyclist starts a braking process
     
-    if ~isempty(objectIndex)
-        if distance_cluster_to_origin < threshold_distance_to_sensor && velocity > threshold_ego_velocity
-                % mark as dangerous 
-                danger.scannumber = all_clusters{i}.numScan; 
-                danger.clusterId = currentId;
-                danger.x = all_clusters{i}.x;
-                danger.y = all_clusters{i}.y;
-                danger.meanToOrigin = distance_cluster_to_origin;
-                danger.egoVelocity = ego_velocity_mean(all_clusters{i}.numScan); 
-                all_dangerous_clusters_back{j}= danger; 
-                j = j+1; 
-        
-        % braking condition requires adapted threshold distance to cyclist
-        elseif (deceleration && velocity > threshold_ego_velocity)
-            braking_distance = computeBrakingDistance(velocity, acceleration);
-            threshold_distance_to_sensor = residual_distance + braking_distance; 
-            if distance_cluster_to_origin < threshold_distance_to_sensor
-                danger.scannumber = all_clusters{i}.numScan; 
-                danger.clusterId = currentId;
-                danger.x = all_clusters{i}.x;
-                danger.y = all_clusters{i}.y;
-                danger.meanToOrigin = distance_cluster_to_origin;
-                danger.egoVelocity = velocity; 
-                all_dangerous_clusters_back{j} = danger; 
-                j = j + 1; 
-            end
-        end 
-        danger.scannumber = [];
-        danger.clusterId = [];
-        danger.x = [];
-        danger.y = [];
-        danger.meanToOrigin = [];
-        danger.egoVelocity = [];
+    if i >= 8
+        ego_velocitiy_history = ego_velocity_mean(i-7:i); 
+        mean_velocity_last_eight_scans = median(ego_velocitiy_history);
+    
 
+        if ~isempty(objectIndex)
+            if distance_cluster_to_origin < threshold_distance_to_sensor && mean_velocity_last_eight_scans > threshold_ego_velocity
+                    % mark as dangerous 
+                    danger.scannumber = all_clusters{i}.numScan; 
+                    danger.clusterId = currentId;
+                    danger.x = all_clusters{i}.x;
+                    danger.y = all_clusters{i}.y;
+                    danger.meanToOrigin = distance_cluster_to_origin;
+                    danger.egoVelocity = ego_velocity_mean(all_clusters{i}.numScan); 
+                    all_dangerous_clusters_back{j}= danger; 
+                    j = j+1; 
+            
+            % braking condition requires adapted threshold distance to cyclist
+            elseif (deceleration && velocity > threshold_ego_velocity)
+                braking_distance = computeBrakingDistance(velocity, acceleration);
+                threshold_distance_to_sensor = residual_distance + braking_distance; 
+                if distance_cluster_to_origin < threshold_distance_to_sensor
+                    danger.scannumber = all_clusters{i}.numScan; 
+                    danger.clusterId = currentId;
+                    danger.x = all_clusters{i}.x;
+                    danger.y = all_clusters{i}.y;
+                    danger.meanToOrigin = distance_cluster_to_origin;
+                    danger.egoVelocity = velocity; 
+                    all_dangerous_clusters_back{j} = danger; 
+                    j = j + 1; 
+                end
+            end 
+            danger.scannumber = [];
+            danger.clusterId = [];
+            danger.x = [];
+            danger.y = [];
+            danger.meanToOrigin = [];
+            danger.egoVelocity = [];
+    
+        end
     end
 end
 end

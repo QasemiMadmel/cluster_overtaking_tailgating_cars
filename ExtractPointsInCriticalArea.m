@@ -11,7 +11,7 @@ threshold_y_min = 0.2;
 
 % thresholds for the area directly in fornt of the sensor (rear of bicycle)
 threshold_x_back_max = 1.2; 
-threshold_x_back_min = -1; 
+threshold_x_back_min = -0.5; 
 threshold_y_back_max = 8; 
 threshold_y_back_min = 0.2; 
 
