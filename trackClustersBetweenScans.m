@@ -1,78 +1,111 @@
 function clustersWithId = trackClustersBetweenScans(cluster)
-    
-% classify based on the scannumber 
-% clusters in subsequent frames get the same id number (max number of gaps: 3 frames)
 
-threshold = 0.8; % for an object moving 50 km/h (14 m/s) -> 14/15 = 0,93 is a good threshold 
-idNumber = 1;
-cluster{1}.id = idNumber; 
-    
-    for i = 1:length(cluster)-1
+    dt = 1/15; % Time between scans at 15 Hz
 
-        % now calculate the distance between the meanpoints in
-        % subsequent clusters; if the distance is below the defind
-        % threshold, the current cluster is marked with the same id as the
-        % previous one
-        
-        % subsequent scan is available: 
-        if (cluster{i}.numScan) +1 == cluster{i+1}.numScan  
+    % Allowed distance depending on scan gap
+    distanceThresholds = [0.8, 1.0, 1.0];
 
-            % compute mean distance in between 
-            deltaX = cluster{i+1}.meanValue.centerX - cluster{i}.meanValue.centerX;
-            deltaY = cluster{i+1}.meanValue.centerY - cluster{i}.meanValue.centerY;
-            distance_between_mean_values = sqrt((deltaX)^2 + ...
-                                               (deltaY)^2);
-            % check
-            if distance_between_mean_values < threshold 
-                
-                % store the same id number in order to distinguish between
-                % clusters
-    
-                cluster{i}.id = idNumber;
-                cluster{i+1}.id = idNumber;
-            else
-                % otherwise just go to next cluster
-                idNumber = idNumber+1;  
-                cluster{i+1}.id = idNumber;  
-            end
+    numberOfClusters = length(cluster);
 
-        % apply the same logic but allow a larger gap between two scans with clusters 
-        elseif (cluster{i}.numScan +2) == cluster{i+1}.numScan 
-
-            deltaX = cluster{i+1}.meanValue.centerX - cluster{i}.meanValue.centerX;
-            deltaY = cluster{i+1}.meanValue.centerY - cluster{i}.meanValue.centerY;
-            distance_between_mean_values = sqrt((deltaX)^2 + ...
-                                               (deltaY)^2);
-            
-            if distance_between_mean_values < threshold 
-                cluster{i}.id = idNumber;
-                cluster{i+1}.id = idNumber;
-            else
-                idNumber = idNumber+1;  
-                cluster{i+1}.id = idNumber; 
-            end
-
-        % gap of 3 frames 
-        elseif (cluster{i}.numScan +3) == cluster{i+1}.numScan  
-            
-            deltaX = cluster{i+1}.meanValue.centerX - cluster{i}.meanValue.centerX;
-            deltaY = cluster{i+1}.meanValue.centerY - cluster{i}.meanValue.centerY;
-            distance_between_mean_values = sqrt((deltaX)^2 + ...
-                                               (deltaY)^2);
-            if distance_between_mean_values < threshold 
-                cluster{i}.id = idNumber;
-                cluster{i+1}.id = idNumber;
-            else
-                idNumber = idNumber+1;  
-                cluster{i+1}.id = idNumber; 
-            end
-        
-        else
-            idNumber = idNumber+1;  
-            cluster{i+1}.id = idNumber;  
-        end
-    
+    if numberOfClusters == 0
+        clustersWithId = cluster;
+        return;
     end
 
-    clustersWithId = cluster; 
+    % Marks clusters that have already been assigned as successors
+    used = false(1, numberOfClusters);
+
+    nextId = 1;
+
+    % Initialize fields
+    for i = 1:numberOfClusters
+        cluster{i}.id = [];
+        cluster{i}.speed = 0;
+    end
+
+    % Go over all clusters
+    for i = 1:numberOfClusters
+
+        % If cluster i has no ID yet, it represents a new object
+        if isempty(cluster{i}.id)
+
+            cluster{i}.id = nextId;
+            cluster{i}.speed = 0;
+
+            nextId = nextId + 1;
+        end
+
+        % First search scan +1, then scan +2 and scan +3
+        for scanGap = 1:3
+
+            smallestDistance = inf;
+            bestIndex = [];
+            bestDeltaY = [];
+
+            % Compare cluster i with all later clusters
+            for k = i+1:numberOfClusters
+
+                actualScanGap = ...
+                    cluster{k}.numScan - cluster{i}.numScan;
+
+                % The candidate belongs to an earlier scan gap
+                if actualScanGap < scanGap
+                    continue;
+                end
+
+                % The candidate is already beyond the investigated scan
+                if actualScanGap > scanGap
+                    break;
+                end
+
+                % Cluster k was already assigned to another predecessor
+                if used(k)
+                    continue;
+                end
+
+                deltaX = ...
+                    cluster{k}.meanValue.centerX - ...
+                    cluster{i}.meanValue.centerX;
+
+                deltaY = ...
+                    cluster{k}.meanValue.centerY - ...
+                    cluster{i}.meanValue.centerY;
+
+                distanceBetweenCenters = ...
+                    sqrt(deltaX^2 + deltaY^2);
+
+                % Store the closest cluster in the investigated scan
+                if distanceBetweenCenters < smallestDistance
+
+                    smallestDistance = distanceBetweenCenters;
+                    bestIndex = k;
+                    bestDeltaY = deltaY;
+                end
+            end
+
+            % Assign the closest suitable cluster
+            if ~isempty(bestIndex) && ...
+               smallestDistance < distanceThresholds(scanGap)
+
+                % Transfer the existing ID
+                cluster{bestIndex}.id = cluster{i}.id;
+
+                % Calculate longitudinal cluster speed
+                cluster{bestIndex}.speed = ...
+                    computeClusterSpeed( ...
+                        bestDeltaY, ...
+                        dt * scanGap);
+
+                % Prevent another assignment of this successor
+                used(bestIndex) = true;
+
+                % A matching cluster was found,
+                % so scan +2 or scan +3 does not need to be checked
+                break;
+            end
+        end
+    end
+
+    clustersWithId = cluster;
+
 end

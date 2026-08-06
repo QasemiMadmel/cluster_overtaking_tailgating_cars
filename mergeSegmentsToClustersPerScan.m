@@ -2,7 +2,7 @@ function mergedSegments = mergeSegmentsToClustersPerScan(segments)
 
 threshold_x = 0.5;
 threshold_merge = 0.7; 
-min_cluster_size = 3; 
+min_cluster_size = 10; 
 
 mergedSegments = {};
 used = false(1, length(segments)); % make a mask array to keep track of handled segments in a single scan 

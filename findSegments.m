@@ -31,12 +31,46 @@ function arrayOfSegments = findSegements(x_scan_points, y_scan_points)
         
         % go over all points in a single scan
         for m = 2:numPoints
-    
-            % if x is NaN corresponding y is also NaN
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+            % if x/y is NaN -> segment should end here
             if isnan(x_scan_points(n,m-1)) || isnan(x_scan_points(n,m))
+                if segmentStarted
+                    % Add the last valid point before the NaN
+                    if ~isnan(x_scan_points(n,m-1)) && ...
+                       ~isnan(y_scan_points(n,m-1))
+            
+                        clusteredSegement.x(end+1) = x_scan_points(n,m-1);
+                        clusteredSegement.y(end+1) = y_scan_points(n,m-1);
+                    end
+            
+                    % Calculate center and length
+                    clusteredSegement.meanValue.centerX = ...
+                        mean(clusteredSegement.x);
+            
+                    clusteredSegement.meanValue.centerY = ...
+                        mean(clusteredSegement.y);
+            
+                    clusteredSegement.length = ...
+                        length(clusteredSegement.x);
+            
+                    % Store finished segment
+                    arrayOfSegments{i} = clusteredSegement;
+                    i = i + 1;
+            
+                    % Reset for next segment
+                    segmentStarted = false;
+            
+                    clusteredSegement.numScan = [];
+                    clusteredSegement.x = [];
+                    clusteredSegement.y = [];
+                    clusteredSegement.meanValue.centerX = [];
+                    clusteredSegement.meanValue.centerY = [];
+                    clusteredSegement.length = [];
+                end
                 continue;
             end
-            
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
             % compute the distance between two neighbouring points
             dx = abs(x_scan_points(n,m) - x_scan_points(n,m-1));
             dy = abs(y_scan_points(n,m) - y_scan_points(n,m-1));
